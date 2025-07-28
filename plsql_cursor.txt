@@ -1,0 +1,30 @@
+-- Sample Data
+CREATE TABLE employees (
+    employee_id INT PRIMARY KEY,
+    employee_name VARCHAR(50)
+);
+
+INSERT INTO employees VALUES (1, 'John Doe');
+INSERT INTO employees VALUES (2, 'Jane Smith');
+
+-- PL/SQL Block with Cursor Variable
+DECLARE
+    TYPE ref_cursor_type IS REF CURSOR;
+    cursor_variable ref_cursor_type;
+    emp_id employees.employee_id%TYPE;
+    emp_name employees.employee_name%TYPE;
+BEGIN
+    -- Dynamic Query using Cursor Variable
+    OPEN cursor_variable FOR 'SELECT * FROM employees';
+    
+    -- Fetch and Display Data
+    LOOP
+        FETCH cursor_variable INTO emp_id, emp_name;
+        EXIT WHEN cursor_variable%NOTFOUND;
+        DBMS_OUTPUT.PUT_LINE('Employee ID: ' || emp_id || ', Employee Name: ' || emp_name);
+    END LOOP;
+
+    -- Close Cursor
+    CLOSE cursor_variable;
+END;
+/
