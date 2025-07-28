@@ -1,0 +1,36 @@
+-- Procedure Accepting Cursor Variable as Parameter
+CREATE OR REPLACE PROCEDURE display_employee_data (
+    p_cursor_variable IN OUT SYS_REFCURSOR
+)
+IS
+    emp_id employees.employee_id%TYPE;
+    emp_name employees.employee_name%TYPE;
+BEGIN
+    -- Fetch and Display Data
+    LOOP
+        FETCH p_cursor_variable INTO emp_id, emp_name;
+        EXIT WHEN p_cursor_variable%NOTFOUND;
+        DBMS_OUTPUT.PUT_LINE('Employee ID: ' || emp_id || ', Employee Name: ' || emp_name);
+    END LOOP;
+END;
+/
+
+-- Sample Data
+INSERT INTO employees VALUES (3, 'Bob Johnson');
+INSERT INTO employees VALUES (4, 'Alice Williams');
+
+-- PL/SQL Block Calling Procedure with Cursor Variable
+DECLARE
+    TYPE ref_cursor_type IS REF CURSOR;
+    cursor_variable ref_cursor_type;
+BEGIN
+    -- Dynamic Query using Cursor Variable
+    OPEN cursor_variable FOR 'SELECT * FROM employees';
+    
+    -- Call Procedure with Cursor Variable as Parameter
+    display_employee_data(p_cursor_variable => cursor_variable);
+
+    -- Close Cursor
+    CLOSE cursor_variable;
+END;
+/
